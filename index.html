@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -21,4 +21,66 @@
 		<script type="module" src="/main.js"></script>
         Hello
 	</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Three.js Scene with Description</title>
+    <style>
+      body {
+            display: flex;
+            margin: 0;
+        }
+      #left {
+          width: 60%;
+          height: 100vh;
+          overflow: hidden;
+      }
+      #right {
+          width: 40%;
+          height: 100vh;
+          position: relative;
+          padding: 20px;
+          box-sizing: border-box;
+          overflow: auto;
+          font-size: 18px;
+      }
+      canvas {
+          display: block;
+          width: 100%;
+          height: 100%;
+      }
+      .latex-content {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-chtml.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
+        }
+      }
+    </script>
+</head>
+<body>
+    <div id="left">
+        
+    </div>
+    <div id="right">
+        <!-- Three.js scene will be rendered here -->
+        <div id="description">
+          <h2>Scene Description</h2>
+          <p>Your scene description goes here.</p>
+          <p>Some LaTex: \(x = \frac{{-b \pm \sqrt{{b^2-4ac}}}}{{2a}}\)</p>
+      </div>
+    </div>
+		<script type="module" src="/main.js"></script>
+</body>
 </html>
