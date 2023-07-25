@@ -32,17 +32,38 @@ function animate() {
 	renderer.render( scene, camera );
 }
 
+// Get the dropdown and its content
+const dropdown = document.querySelector('.dropdown');
+const dropdownContent = document.querySelector('.dropdown-content');
+
 // Get all the dropdown items
 const dropdownItems = document.querySelectorAll('.dropdown-content a')
 // Add event listener to each dropdown item
 dropdownItems.forEach(item => {
     item.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the anchor from redirectin
+        event.preventDefault(); // Prevent the anchor from redirecting
+
         // Get the index of the clicked scene option
-        const index = parseInt(item.getAttribute('data-index'))
+        const index = parseInt(item.getAttribute('data-index'));
+
         // Call the function to change the scene based on the index
         changeScene(index);
+
+        // Close the dropdown after selecting a scene option
+        dropdownContent.classList.remove('show');
     });
+});
+
+// Toggle the dropdown content visibility when clicking the dropdown button
+dropdown.addEventListener('click', function(event) {
+    dropdownContent.classList.toggle('show');
+});
+
+// Close the dropdown if the user clicks outside of it
+document.addEventListener('click', function(event) {
+    if (!dropdown.contains(event.target)) {
+        dropdownContent.classList.remove('show');
+    }
 });
 
 function changeScene(index) {
