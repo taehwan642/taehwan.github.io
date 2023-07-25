@@ -32,6 +32,28 @@ function animate() {
 	renderer.render( scene, camera );
 }
 
+// Get all the dropdown items
+const dropdownItems = document.querySelectorAll('.dropdown-content a')
+// Add event listener to each dropdown item
+dropdownItems.forEach(item => {
+    item.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the anchor from redirectin
+        // Get the index of the clicked scene option
+        const index = parseInt(item.getAttribute('data-index'))
+        // Call the function to change the scene based on the index
+        changeScene(index);
+    });
+});
+
+function changeScene(index) {
+    if (index == 0) {
+        material.color.setHex(0xff0000);
+    }
+    else if (index == 1) {
+        material.color.setHex(0xff00ff);
+    }
+}
+
 // Example: Updating scene description and math
 const descriptionElement = document.getElementById('description');
 descriptionElement.innerHTML = `
