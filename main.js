@@ -1,40 +1,26 @@
 import * as THREE from 'three';
+import { runScene } from './scene_logic/scene1';
 
 const leftContainer = document.getElementById('left');
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, leftContainer.clientWidth / leftContainer.clientHeight, 0.1, 1000 );
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
 leftContainer.appendChild(renderer.domElement);
 
-
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
-
-window.addEventListener( 'resize', onWindowResize, false );
+let camera = undefined;
+let material = undefined;
 
 function onWindowResize() {
     camera.aspect = leftContainer.clientWidth / leftContainer.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
 }
-
-camera.position.z = 5;
-
-function animate() {
-	requestAnimationFrame( animate );
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-	renderer.render( scene, camera );
-}
+window.addEventListener( 'resize', onWindowResize, false );
 
 // Get the dropdown and its content
 const dropdown = document.querySelector('.dropdown');
 const dropdownContent = document.querySelector('.dropdown-content');
+const sceneRunners = [runScene];
 
 // Get all the dropdown items
 const dropdownItems = document.querySelectorAll('.dropdown-content a')
@@ -91,8 +77,8 @@ descriptionElement.innerHTML = `
     <p>Your updated scene description goes here.</p>
     <p>Some other LaTex: \(E = mc^2\)</p>
     <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
+    <p>Your scene description goes here.</p>
+    <p>Some LaTex: \(x = \\frac {{-b \\pm \\sqrt{{b^2-4ac}}}}{{2a}}\)</p>
     <h2>Scene Description</h2>
     <p>Your updated scene description goes here.</p>
     <p>Some other LaTex: \(E = mc^2\)</p>
@@ -127,4 +113,6 @@ descriptionElement.innerHTML = `
 // Re-render math with MathJax after updating the content
 MathJax.typesetPromise();
 
-animate();
+let retValue = runScene(renderer, leftContainer.clientWidth, leftContainer.clientHeight);
+camera = retValue.camera;
+material = retValue.material;
