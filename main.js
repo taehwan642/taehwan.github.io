@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { runScene } from './scene_logic/scene1';
+import { runScene } from './scene_logic/scene1.js';
 
 const leftContainer = document.getElementById('left');
 
