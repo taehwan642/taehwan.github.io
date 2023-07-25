@@ -1,37 +1,14 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-		<style>
-			body { margin: 0; }
-		</style>
-        <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
-
-        <script type="importmap">
-          {
-            "imports": {
-              "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
-              "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
-            }
-          }
-        </script>
-	</head>
-	<body>
-		<script type="module" src="/main.js"></script>
-        Hello
-	</body>
-</html> -->
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Three.js Scene with Description</title>
     <style>
       body {
-            display: flex;
-            margin: 0;
-        }
+          flex-direction: row;
+          display: flex;
+          margin: 0;
+          overflow: hidden;
+      }
       #left {
           width: 60%;
           height: 100vh;
@@ -45,6 +22,7 @@
           box-sizing: border-box;
           overflow: auto;
           font-size: 18px;
+          background-color: #e6e6e6;
       }
       canvas {
           display: block;
@@ -57,6 +35,23 @@
           justify-content: center;
           width: 100%;
           height: 100%;
+      }
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+        #left {
+            width: 100vw;
+            height: 50vh;
+        }
+        #right {
+            width: 100vw;
+          height: 50vh;
+          background-color: #ff1818;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-chtml.min.js"></script>
