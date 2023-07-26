@@ -1,5 +1,10 @@
 import * as THREE from 'three';
-import { runScene } from './scene_logic/scene1.js';
+import local_space from './scene_logic/local_space.js'
+import world_space from './scene_logic/world_space.js'
+import texture from './scene_logic/texture.js'
+
+let currentScene = null;
+const exampleScenes = [ new local_space(), new world_space(), new texture() ];
 
 const leftContainer = document.getElementById('left');
 
@@ -7,20 +12,59 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
 leftContainer.appendChild(renderer.domElement);
 
-let camera = undefined;
 let material = undefined;
 
+function initialize() {
+    currentScene = exampleScenes[0];
+    currentScene.initialize(leftContainer.clientWidth, leftContainer.clientHeight);
+    const descriptionElement = document.getElementById('description');
+    descriptionElement.innerHTML = currentScene.getDescription();
+    // Re-render math with MathJax after updating the content
+    MathJax.typesetPromise();
+}
+
+function gameLoop() {
+    requestAnimationFrame( gameLoop );
+    currentScene.processInput();
+    currentScene.update();
+    renderer.render( currentScene.scene, currentScene.camera );
+}
+
 function onWindowResize() {
-    camera.aspect = leftContainer.clientWidth / leftContainer.clientHeight;
-    camera.updateProjectionMatrix();
+    currentScene.camera.aspect = leftContainer.clientWidth / leftContainer.clientHeight;
+    currentScene.camera.updateProjectionMatrix();
     renderer.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
 }
 window.addEventListener( 'resize', onWindowResize, false );
 
+function changeScene(index) {
+    currentScene = exampleScenes[index];
+    currentScene.initialize(leftContainer.clientWidth, leftContainer.clientHeight);
+    const descriptionElement = document.getElementById('description');
+    descriptionElement.innerHTML = currentScene.getDescription();
+    // Re-render math with MathJax after updating the content
+    MathJax.typesetPromise();
+}
+
+// scene list
+// currentscene = get scene 0
+// currentscene initialize
+// currentscene getcamera
+// currentscene getscene
+// render
+
+// if changescene
+// removecurrentscene
+// initialize
+// render
+
+// model 
+// - stanford bunny
+// - suzanne
+
 // Get the dropdown and its content
 const dropdown = document.querySelector('.dropdown');
 const dropdownContent = document.querySelector('.dropdown-content');
-const sceneRunners = [runScene];
 
 // Get all the dropdown items
 const dropdownItems = document.querySelectorAll('.dropdown-content a')
@@ -52,67 +96,5 @@ document.addEventListener('click', function(event) {
     }
 });
 
-function changeScene(index) {
-    if (index == 0) {
-        material.color.setHex(0xff0000);
-    }
-    else if (index == 1) {
-        material.color.setHex(0xff00ff);
-    }
-}
-
-// Example: Updating scene description and math
-const descriptionElement = document.getElementById('description');
-descriptionElement.innerHTML = `
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your scene description goes here.</p>
-    <p>Some LaTex: \(x = \\frac {{-b \\pm \\sqrt{{b^2-4ac}}}}{{2a}}\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-    <h2>Scene Description</h2>
-    <p>Your updated scene description goes here.</p>
-    <p>Some other LaTex: \(E = mc^2\)</p>
-`;
-// Re-render math with MathJax after updating the content
-MathJax.typesetPromise();
-
-let retValue = runScene(renderer, leftContainer.clientWidth, leftContainer.clientHeight);
-camera = retValue.camera;
-material = retValue.material;
+initialize();
+gameLoop();
