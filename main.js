@@ -10,9 +10,8 @@ const leftContainer = document.getElementById('left');
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
+renderer.setClearColor(0x000000);
 leftContainer.appendChild(renderer.domElement);
-
-let material = undefined;
 
 function initialize() {
     currentScene = exampleScenes[0];
@@ -45,22 +44,6 @@ function changeScene(index) {
     // Re-render math with MathJax after updating the content
     MathJax.typesetPromise();
 }
-
-// scene list
-// currentscene = get scene 0
-// currentscene initialize
-// currentscene getcamera
-// currentscene getscene
-// render
-
-// if changescene
-// removecurrentscene
-// initialize
-// render
-
-// model 
-// - stanford bunny
-// - suzanne
 
 // Get the dropdown and its content
 const dropdown = document.querySelector('.dropdown');
