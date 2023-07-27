@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import local_space from './scene_logic/local_space.js'
 import world_space from './scene_logic/world_space.js'
 import texture from './scene_logic/texture.js'
+import lighting from './scene_logic/lighting.js'
 
 let currentScene = null;
-const exampleScenes = [ new local_space(), new world_space(), new texture() ];
+const exampleScenes = [ new local_space(), new world_space(), new texture(), new lighting() ];
 
 const leftContainer = document.getElementById('left');
 

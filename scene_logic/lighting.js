@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import exampleScene from './exampleScene.js'
 
-export default class texture extends exampleScene {
+export default class lighting extends exampleScene {
     torusknot;
     cube;
 
@@ -31,8 +31,10 @@ export default class texture extends exampleScene {
         this.torusknot = torusknot;
         this.torusknot.position.x = -2;
         this.scene.add( torusknot );
-        const light = new THREE.AmbientLight( 0xffffff ); // soft white light
+        const light = new THREE.AmbientLight( 0x404040 ); // soft white light
         this.scene.add( light );
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1) // soft white light
+        this.scene.add( directionalLight );
 
         const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
         const cube = new THREE.Mesh( cubeGeometry, material );
@@ -52,8 +54,9 @@ export default class texture extends exampleScene {
     }
     getDescription() {
         return `
-        <h2>Texture</h2>
-        <p>UV coordinate</p>
+        <h2>Lighting</h2>
+        <p> Phong </p>
+        <p> Ambient + Specular + Diffuse </p>
         `;
     }
 }
