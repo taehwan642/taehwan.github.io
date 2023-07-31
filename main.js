@@ -3,15 +3,16 @@ import local_space from './scene_logic/local_space.js'
 import world_space from './scene_logic/world_space.js'
 import texture from './scene_logic/texture.js'
 import lighting from './scene_logic/lighting.js'
+import radiosity from './scene_logic/radiosity.js'
 
 let currentScene = null;
-const exampleScenes = [ new local_space(), new world_space(), new texture(), new lighting() ];
+const exampleScenes = [ new local_space(), new world_space(), new texture(), new lighting(), new radiosity() ];
 
 const leftContainer = document.getElementById('left');
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
-renderer.setClearColor(0x000000);
+renderer.setClearColor(0x404040);
 leftContainer.appendChild(renderer.domElement);
 
 function initialize() {
