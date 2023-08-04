@@ -59,4 +59,7 @@ export default class lighting extends exampleScene {
         <p> Ambient + Specular + Diffuse </p>
         `;
     }
+    setRenderer(renderer) {
+        this.renderer = renderer;
+    }
 }

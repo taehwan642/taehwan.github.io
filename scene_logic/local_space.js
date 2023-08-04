@@ -27,4 +27,7 @@ export default class local_space extends exampleScene {
         <p>there's only position information</p>
         `;
     }
+    setRenderer(renderer) {
+        this.renderer = renderer;
+    }
 }

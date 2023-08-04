@@ -16,4 +16,7 @@ export default class exampleScene {
     getDescription() {
 
     }
+    setRenderer(renderer) {
+        this.renderer = renderer;
+    }
 }

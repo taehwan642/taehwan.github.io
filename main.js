@@ -17,6 +17,7 @@ leftContainer.appendChild(renderer.domElement);
 
 function initialize() {
     currentScene = exampleScenes[0];
+    currentScene.setRenderer(renderer);
     currentScene.initialize(leftContainer.clientWidth, leftContainer.clientHeight);
     const descriptionElement = document.getElementById('description');
     descriptionElement.innerHTML = currentScene.getDescription();
@@ -40,6 +41,7 @@ window.addEventListener( 'resize', onWindowResize, false );
 
 function changeScene(index) {
     currentScene = exampleScenes[index];
+    currentScene.setRenderer(renderer);
     currentScene.initialize(leftContainer.clientWidth, leftContainer.clientHeight);
     const descriptionElement = document.getElementById('description');
     descriptionElement.innerHTML = currentScene.getDescription();

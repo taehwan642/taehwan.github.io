@@ -28,4 +28,7 @@ export default class world_space extends exampleScene {
         <p>scale, rotation, translation information</p>
         `;
     }
+    setRenderer(renderer) {
+        this.renderer = renderer;
+    }
 }

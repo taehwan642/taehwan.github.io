@@ -56,4 +56,7 @@ export default class texture extends exampleScene {
         <p>UV coordinate</p>
         `;
     }
+    setRenderer(renderer) {
+        this.renderer = renderer;
+    }
 }
