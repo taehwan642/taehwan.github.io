@@ -249,6 +249,23 @@ export default class radiosity extends exampleScene {
             this.scene.add(elements[i].mesh)
         }
 
+        for (var i = 0; i < this.models.length; ++i) {
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute( 'position', new THREE.Float32BufferAttribute( this.getVerticesRawPosition(), 3 ) );
+            geo.setAttribute( 'normal', new THREE.Float32BufferAttribute( this.models[i].normal, 3 ) );
+            geo.setIndex(this.models[i].indices);
+
+            const material = new THREE.MeshBasicMaterial({
+                color: new THREE.Color(this.models[i].reflectance.r, this.models[i].reflectance.g, this.models[i].reflectance.b),
+            });
+
+            const mesh = new THREE.Mesh(geo, material);
+            mesh.position.x = 300;
+            mesh.position.z = -300;
+            
+            this.scene.add(mesh)
+        }
+
         const geometry = new THREE.PlaneGeometry(200, 200, 1, 1);
         const material = new THREE.MeshBasicMaterial({
             map: this.hemiCubeRenderTarget.texture,
@@ -394,12 +411,12 @@ export default class radiosity extends exampleScene {
         models[10] = new ModelData([12, 16, 17, 12, 17, 13],    [0.5, 0, -0.866],   1, 5, (65 * 65),      yellow,       black);
         models[11] = new ModelData([14, 13, 17, 14, 17, 18],    [0.866, 0, 0.5],    1, 5, (65 * 65),      yellow,       black);
         models[12] = new ModelData([14, 18, 19, 14, 19, 15],    [-0.5, 0, 0.866],   1, 5, (65 * 65),      yellow,       black);
-        models[13] = new ModelData([24, 27, 26, 24, 26, 25],    [0, 1, 0],          1, 5, (65 * 65),      white,   black);
-        models[14] = new ModelData([20, 21, 22, 20, 22, 23],    [0, -1, 0],         1, 1, (65 * 65),      white,   black);
-        models[15] = new ModelData([20, 23, 27, 20, 27, 24],    [-0.866, 0, -0.5],  1, 6, (65 * 130),     white,   black);
-        models[16] = new ModelData([20, 24, 25, 20, 25, 21],    [0.5, 0, -0.866],   1, 6, (65 * 130),     white,   black);
-        models[17] = new ModelData([22, 21, 25, 22, 25, 26],    [0.866, 0, 0.5],    1, 6, (65 * 130),     white,   black);
-        models[18] = new ModelData([22, 26, 27, 22, 27, 23],    [-0.5, 0, 0.866],   1, 6, (65 * 130),     white,   black);
+        models[13] = new ModelData([24, 27, 26, 24, 26, 25],    [0, 1, 0],          1, 5, (65 * 65),      lightGreen,   black);
+        models[14] = new ModelData([20, 21, 22, 20, 22, 23],    [0, -1, 0],         1, 1, (65 * 65),      lightGreen,   black);
+        models[15] = new ModelData([20, 23, 27, 20, 27, 24],    [-0.866, 0, -0.5],  1, 6, (65 * 130),     lightGreen,   black);
+        models[16] = new ModelData([20, 24, 25, 20, 25, 21],    [0.5, 0, -0.866],   1, 6, (65 * 130),     lightGreen,   black);
+        models[17] = new ModelData([22, 21, 25, 22, 25, 26],    [0.866, 0, 0.5],    1, 6, (65 * 130),     lightGreen,   black);
+        models[18] = new ModelData([22, 26, 27, 22, 27, 23],    [-0.5, 0, 0.866],   1, 6, (65 * 130),     lightGreen,   black);
     }
 
     convertUVtoPoint(vertices, u, v)
@@ -457,11 +474,11 @@ export default class radiosity extends exampleScene {
                         (i * (nv + 1) + (j + 1)) + vertexOffset,
                         ((i + 1) * (nv + 1) + (j + 1)) + vertexOffset
                     ],
-                    modelData.normal,
+                    [...modelData.normal],
                     null,
                     modelData.area / (nu * nv),
                     patches[patchesIndex + pi * modelData.patchLevel + pj],
-                    modelData.reflectance,
+                    modelData.reflectance.clone(),
                 );
             }
         }
@@ -474,9 +491,9 @@ export default class radiosity extends exampleScene {
         for (i = 0, u = du / 2.0; i < nu; i++, u += du) {
             for (j = 0, v = dv / 2.0; j < nv; j++, v += dv, patchesIndex++) {
                 patches[patchesIndex].center = this.convertUVtoPoint(quadVertices, u, v);
-                patches[patchesIndex].normal = modelData.normal;
-                patches[patchesIndex].reflectance = modelData.reflectance;
-                patches[patchesIndex].emission = modelData.emission;
+                patches[patchesIndex].normal = [...modelData.normal];
+                patches[patchesIndex].reflectance = modelData.reflectance.clone();
+                patches[patchesIndex].emission = modelData.emission.clone();
                 patches[patchesIndex].area = modelData.area / (nu * nv);
             }
         }
@@ -717,9 +734,9 @@ export default class radiosity extends exampleScene {
         up[1] = normal.clone();
         lookAt[2] = new THREE.Vector3().addVectors(center, tangentV);
         up[2] = normal.clone();
-        lookAt[3] = new THREE.Vector3().addVectors(center, tangentU);
+        lookAt[3] = new THREE.Vector3().subVectors(center, tangentU);
         up[3] = normal.clone();
-        lookAt[4] = new THREE.Vector3().addVectors(center, tangentV);
+        lookAt[4] = new THREE.Vector3().subVectors(center, tangentV);
         up[4] = normal.clone();
 
         normal.multiplyScalar(this.radiosityParameter.worldSize * 0.00000001);
@@ -728,6 +745,7 @@ export default class radiosity extends exampleScene {
         this.hemiCube.view.center.z = center.z + normal.z;
 
         //console.log(lookAt);
+        //console.log(up);
 
 	    // /* clear the formfactors */
 	    for (let i = 0; i < this.formFactors.length; ++i) {
@@ -736,8 +754,8 @@ export default class radiosity extends exampleScene {
 
         for (let face = 0; face < 5; ++face) {
 
-            this.hemiCube.view.lookAt = lookAt[face];
-            this.hemiCube.view.up = up[face];
+            this.hemiCube.view.lookAt = lookAt[face].clone();
+            this.hemiCube.view.up = up[face].clone();
 
             this.beginDrawHemiCube(planeEquation);
             for (let i = 0; i < this.elements.length; ++i) {
