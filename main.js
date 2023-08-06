@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import local_space from './scene_logic/local_space.js'
 import world_space from './scene_logic/world_space.js'
-import texture from './scene_logic/texture.js'
-import lighting from './scene_logic/lighting.js'
+import diffuse_lighting from './scene_logic/diffuse_lighting.js'
+import normal_map_diffuse_lighting from './scene_logic/normal_map_diffuse_lighting.js'
 import radiosity from './scene_logic/radiosity.js'
 
 let currentScene = null;
-const exampleScenes = [ new local_space(), new world_space(), new texture(), new lighting(), new radiosity() ];
+const exampleScenes = [ new local_space(), new world_space(), new diffuse_lighting(), new normal_map_diffuse_lighting(), new radiosity()];
 
 const leftContainer = document.getElementById('left');
 
