@@ -82,6 +82,16 @@
           height: 50vh;
           background-color: #e6e6e6;
         }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            max-height: 400px;
+            overflow: auto;
+        }
       }
     </style>
     <script>
@@ -117,7 +127,8 @@
                 <a href="#" data-index="4">Normal Map Lambertian Reflectance</a>
                 <a href="#" data-index="5">Phong Reflection</a>
                 <a href="#" data-index="6">Blinn Phong Reflection</a>
-                <a href="#" data-index="7">Radiosity</a>
+                <a href="#" data-index="7">Toon Shading</a>
+                <a href="#" data-index="8">Radiosity</a>
             </div>
         </div>
     </header>

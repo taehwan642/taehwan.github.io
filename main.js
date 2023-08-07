@@ -6,10 +6,21 @@ import texture from './scene_logic/texture.js';
 import normal_map_lambertian_reflectance from './scene_logic/normal_map_lambertian_reflectance.js'
 import phong_reflection from './scene_logic/phong_reflection.js'
 import blinn_phong_reflection from './scene_logic/blinn_phong_reflection.js'
+import toon_shading from './scene_logic/toon_shading.js';
 import radiosity from './scene_logic/radiosity.js'
 
 let currentScene = null;
-const exampleScenes = [ new local_space(), new world_space(), new lambertian_reflectance(), new texture(), new normal_map_lambertian_reflectance(), new phong_reflection(), new blinn_phong_reflection(), new radiosity()];
+const exampleScenes = [ 
+    new local_space(), 
+    new world_space(), 
+    new lambertian_reflectance(), 
+    new texture(), 
+    new normal_map_lambertian_reflectance(), 
+    new phong_reflection(), 
+    new blinn_phong_reflection(), 
+    new toon_shading(), 
+    new radiosity()
+];
 
 const leftContainer = document.getElementById('left');
 
