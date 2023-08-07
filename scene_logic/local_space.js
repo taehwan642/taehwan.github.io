@@ -8,7 +8,7 @@ export default class local_space extends exampleScene {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera( 75, clientWidth / clientHeight, 0.1, 1000 );
 
-        const geometry = new THREE.TorusKnotGeometry();
+        const geometry = new THREE.TorusKnotGeometry(1, 0.4, 128, 8, 2, 3);
 
         const vertexShader = `
             void main() {
