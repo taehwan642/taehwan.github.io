@@ -7,6 +7,7 @@ import normal_map_lambertian_reflectance from './scene_logic/normal_map_lamberti
 import phong_reflection from './scene_logic/phong_reflection.js'
 import blinn_phong_reflection from './scene_logic/blinn_phong_reflection.js'
 import toon_shading from './scene_logic/toon_shading.js';
+import camping from './scene_logic/camping.js';
 import radiosity from './scene_logic/radiosity.js'
 
 let currentScene = null;
@@ -19,6 +20,7 @@ const exampleScenes = [
     new phong_reflection(), 
     new blinn_phong_reflection(), 
     new toon_shading(), 
+    new camping(),
     new radiosity()
 ];
 
@@ -30,7 +32,7 @@ renderer.setClearColor(0x404040);
 leftContainer.appendChild(renderer.domElement);
 
 function initialize() {
-    currentScene = exampleScenes[0];
+    currentScene = exampleScenes[8];
     currentScene.setRenderer(renderer);
     currentScene.initialize(leftContainer.clientWidth, leftContainer.clientHeight);
     const descriptionElement = document.getElementById('description');

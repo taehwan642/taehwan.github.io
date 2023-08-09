@@ -15,23 +15,26 @@ export default class lambertian_reflectance extends exampleScene {
         
         const vertexShader = `
             varying mat4x4 toWorld;
+            varying vec3 vPosition;
             varying vec3 vNormal;
             varying vec2 vUV;
             void main() {
                 vUV = uv;
                 toWorld = transpose(inverse(modelMatrix));
+                vPosition = vec3(modelMatrix * vec4(position, 1.0));
                 vNormal = normal;
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
             }`;
 
         const fragmentShader = `
         varying mat4x4 toWorld;
+        varying vec3 vPosition;
         varying vec3 vNormal;
         varying vec2 vUV;
-        uniform vec3 lightDirection;
+        uniform vec3 lightPosition;
         void main() {
             // 0 -> 1 rather than -1 -> 1
-            vec3 light = lightDirection;
+            vec3 light = vPosition - lightPosition;
             
             // ensure it's normalized
             light = normalize(light);
@@ -48,7 +51,7 @@ export default class lambertian_reflectance extends exampleScene {
         }`;
 
         const uniforms = {
-            lightDirection: { value: new THREE.Vector3(0, 0, 0) },
+            lightPosition: { value: new THREE.Vector3(0, 0, 0) },
         };
         const material = new THREE.ShaderMaterial({
             uniforms: uniforms,
@@ -85,13 +88,11 @@ export default class lambertian_reflectance extends exampleScene {
         this.lightOrbit.position.x = Math.cos(this.time) * this.scale;
         this.lightOrbit.position.z = Math.sin(this.time) * this.scale;
 
-        let torusKnotWorldPosition = new THREE.Vector3();
         let lightOrbitWorldPosition = new THREE.Vector3();
 
-        this.torusknot.getWorldPosition(torusKnotWorldPosition);
         this.lightOrbit.getWorldPosition(lightOrbitWorldPosition);
 
-        this.torusknot.material.uniforms.lightDirection.value = new THREE.Vector3().subVectors(torusKnotWorldPosition, lightOrbitWorldPosition);
+        this.torusknot.material.uniforms.lightPosition.value = new THREE.Vector3().add(lightOrbitWorldPosition);
 
         this.controls.update();
     }

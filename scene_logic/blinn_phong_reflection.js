@@ -18,7 +18,6 @@ export default class blinn_phong_reflection extends exampleScene {
         const blinnVertexShader = `
             attribute vec3 tangent;
 
-            uniform vec3 lightDirection;
             uniform vec3 worldCameraPosition;
 
             varying mat3x3 toWorld;
@@ -51,7 +50,7 @@ export default class blinn_phong_reflection extends exampleScene {
         const blinnFragmentShader = `
             uniform sampler2D diffuseTex;
             uniform sampler2D normalTex;
-            uniform vec3 lightDirection;
+            uniform vec3 lightPosition;
             uniform vec3 ambient;
             uniform vec3 worldCameraPosition;
 
@@ -66,7 +65,7 @@ export default class blinn_phong_reflection extends exampleScene {
                 // diffuse
                 vec3 diffuse = texture2D(diffuseTex, vUV).rgb;
 
-                vec3 worldLightDirection = lightDirection;
+                vec3 worldLightDirection = vPosition - lightPosition;
                 worldLightDirection = normalize(worldLightDirection);
               
                 vec3 tanNormal = texture2D(normalTex, vUV).rgb;
@@ -94,7 +93,7 @@ export default class blinn_phong_reflection extends exampleScene {
             diffuseTex: { value: new THREE.TextureLoader().load("../assets/Dirt_01_diffuseOriginal.png", (texture) => {}) },
             normalTex: { value: new THREE.TextureLoader().load("../assets/Dirt_01_normal.png", (texture) => {}) },
             ambient: { value: new THREE.Vector3(0.2, 0.2, 0.2) },
-            lightDirection: { value: new THREE.Vector3(0, 0, 0) },
+            lightPosition: { value: new THREE.Vector3(0, 0, 0) },
             worldCameraPosition: { value: new THREE.Vector3(0, 0, 0) },
         };
         const blinnMaterial = new THREE.ShaderMaterial({
@@ -113,7 +112,6 @@ export default class blinn_phong_reflection extends exampleScene {
         const phongVertexShader = `
             attribute vec3 tangent;
 
-            uniform vec3 lightDirection;
             uniform vec3 worldCameraPosition;
 
             varying mat3x3 toWorld;
@@ -146,7 +144,7 @@ export default class blinn_phong_reflection extends exampleScene {
         const phongFragmentShader = `
             uniform sampler2D diffuseTex;
             uniform sampler2D normalTex;
-            uniform vec3 lightDirection;
+            uniform vec3 lightPosition;
             uniform vec3 ambient;
             uniform vec3 worldCameraPosition;
 
@@ -161,7 +159,7 @@ export default class blinn_phong_reflection extends exampleScene {
                 // diffuse
                 vec3 diffuse = texture2D(diffuseTex, vUV).rgb;
 
-                vec3 worldLightDirection = lightDirection;
+                vec3 worldLightDirection = vPosition - lightPosition;
                 worldLightDirection = normalize(worldLightDirection);
               
                 vec3 tanNormal = texture2D(normalTex, vUV).rgb;
@@ -189,7 +187,7 @@ export default class blinn_phong_reflection extends exampleScene {
             diffuseTex: { value: new THREE.TextureLoader().load("../assets/Dirt_01_diffuseOriginal.png", (texture) => {}) },
             normalTex: { value: new THREE.TextureLoader().load("../assets/Dirt_01_normal.png", (texture) => {}) },
             ambient: { value: new THREE.Vector3(0.2, 0.2, 0.2) },
-            lightDirection: { value: new THREE.Vector3(0, 0, 0) },
+            lightPosition: { value: new THREE.Vector3(0, 0, 0) },
             worldCameraPosition: { value: new THREE.Vector3(0, 0, 0) },
         };
         const phongMaterial = new THREE.ShaderMaterial({
@@ -235,22 +233,18 @@ export default class blinn_phong_reflection extends exampleScene {
         this.phongLightOrbit.position.x = Math.cos(this.time) * this.scale;
         this.phongLightOrbit.position.z = Math.sin(this.time) * this.scale;
 
-        let blinnTorusKnotWorldPosition = new THREE.Vector3();
         let blinnLightOrbitWorldPosition = new THREE.Vector3();
-        let phongTorusKnotWorldPosition = new THREE.Vector3();
         let phongLightOrbitWorldPosition = new THREE.Vector3();
         let cameraWorldPosition = new THREE.Vector3();
 
-        this.blinnTorusKnot.getWorldPosition(blinnTorusKnotWorldPosition);
         this.blinnLightOrbit.getWorldPosition(blinnLightOrbitWorldPosition);
-        this.phongTorusKnot.getWorldPosition(phongTorusKnotWorldPosition);
         this.phongLightOrbit.getWorldPosition(phongLightOrbitWorldPosition);
         this.camera.getWorldPosition(cameraWorldPosition);
 
-        this.blinnTorusKnot.material.uniforms.lightDirection.value = new THREE.Vector3().subVectors(blinnTorusKnotWorldPosition, blinnLightOrbitWorldPosition);
+        this.blinnTorusKnot.material.uniforms.lightPosition.value = new THREE.Vector3().add(blinnLightOrbitWorldPosition);
         this.blinnTorusKnot.material.uniforms.worldCameraPosition.value = new THREE.Vector3().add(cameraWorldPosition);
 
-        this.phongTorusKnot.material.uniforms.lightDirection.value = new THREE.Vector3().subVectors(phongTorusKnotWorldPosition, phongLightOrbitWorldPosition);
+        this.phongTorusKnot.material.uniforms.lightPosition.value = new THREE.Vector3().add(phongLightOrbitWorldPosition);
         this.phongTorusKnot.material.uniforms.worldCameraPosition.value = new THREE.Vector3().add(cameraWorldPosition);
 
         this.controls.update();

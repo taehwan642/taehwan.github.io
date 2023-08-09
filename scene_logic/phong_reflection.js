@@ -16,7 +16,6 @@ export default class phong_reflection extends exampleScene {
         const vertexShader = `
             attribute vec3 tangent;
 
-            uniform vec3 lightDirection;
             uniform vec3 worldCameraPosition;
 
             varying mat3x3 toWorld;
@@ -49,7 +48,7 @@ export default class phong_reflection extends exampleScene {
         const fragmentShader = `
             uniform sampler2D diffuseTex;
             uniform sampler2D normalTex;
-            uniform vec3 lightDirection;
+            uniform vec3 lightPosition;
             uniform vec3 ambient;
             uniform vec3 worldCameraPosition;
 
@@ -64,7 +63,7 @@ export default class phong_reflection extends exampleScene {
                 // diffuse
                 vec3 diffuse = texture2D(diffuseTex, vUV).rgb;
 
-                vec3 worldLightDirection = lightDirection;
+                vec3 worldLightDirection = vPosition - lightPosition;
                 worldLightDirection = normalize(worldLightDirection);
               
                 vec3 tanNormal = texture2D(normalTex, vUV).rgb;
@@ -92,7 +91,7 @@ export default class phong_reflection extends exampleScene {
             diffuseTex: { value: new THREE.TextureLoader().load("../assets/Dirt_01_diffuseOriginal.png", (texture) => {}) },
             normalTex: { value: new THREE.TextureLoader().load("../assets/Dirt_01_normal.png", (texture) => {}) },
             ambient: { value: new THREE.Vector3(0.2, 0.2, 0.2) },
-            lightDirection: { value: new THREE.Vector3(0, 0, 0) },
+            lightPosition: { value: new THREE.Vector3(0, 0, 0) },
             worldCameraPosition: { value: new THREE.Vector3(0, 0, 0) },
         };
         const material = new THREE.ShaderMaterial({
@@ -129,15 +128,13 @@ export default class phong_reflection extends exampleScene {
         this.lightOrbit.position.x = Math.cos(this.time) * this.scale;
         this.lightOrbit.position.z = Math.sin(this.time) * this.scale;
 
-        let torusKnotWorldPosition = new THREE.Vector3();
         let lightOrbitWorldPosition = new THREE.Vector3();
         let cameraWorldPosition = new THREE.Vector3();
 
-        this.torusknot.getWorldPosition(torusKnotWorldPosition);
         this.lightOrbit.getWorldPosition(lightOrbitWorldPosition);
         this.camera.getWorldPosition(cameraWorldPosition);
 
-        this.torusknot.material.uniforms.lightDirection.value = new THREE.Vector3().subVectors(torusKnotWorldPosition, lightOrbitWorldPosition);
+        this.torusknot.material.uniforms.lightPosition.value = new THREE.Vector3().add(lightOrbitWorldPosition);
         this.torusknot.material.uniforms.worldCameraPosition.value = new THREE.Vector3().add(cameraWorldPosition);
 
         this.controls.update();
