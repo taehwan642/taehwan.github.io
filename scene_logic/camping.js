@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import exampleScene from './exampleScene.js'
-import {FBXLoader} from "three/examples/jsm/loaders/FBXLoader";
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 const ModelIndex = {
     TREE1: 0,
