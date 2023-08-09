@@ -75,6 +75,7 @@ export default class camping extends exampleScene {
             uniform sampler2D diffuseTex;
             uniform sampler2D normalTex;
             uniform vec3 lightPosition;
+            uniform vec3 specularColor;
             uniform vec3 ambient;
             uniform vec3 worldCameraPosition;
             uniform float glossiness;
@@ -107,7 +108,7 @@ export default class camping extends exampleScene {
                     specular = pow(max(dot(worldNormal, worldHalfWayDirection), 0.0), glossiness * glossiness);
                 }
 
-                vec3 finalColor = ambient + diffuse * nDotL + specular;
+                vec3 finalColor = ambient + diffuse * nDotL + specularColor * specular;
                 gl_FragColor = vec4(finalColor, 1.0);
             }`;
 
@@ -115,12 +116,12 @@ export default class camping extends exampleScene {
         const uniforms = {
             diffuseTex: { value: new THREE.TextureLoader().load("../assets/texture_gradient.png", (texture) => {}) },
             normalTex: { value: new THREE.TextureLoader().load("../assets/texture_gradient.png", (texture) => {}) },
-            ambient: { value: new THREE.Vector3(0.12, 0.12, 0.12) },
+            ambient: { value: new THREE.Vector3(0, 0, 0.2) },
             lightPosition: { value: new THREE.Vector3(0, 0, 0) },
+            specularColor: { value: new THREE.Vector3(0.99, 0.83, 0.5) },
             worldCameraPosition: { value: new THREE.Vector3(0, 0, 0) },
             glossiness: { value: 8.0 },
             time: { value: 0.0 },
-            repeat: { value: new THREE.Vector2(0, 0) },
         };
         const material = new THREE.ShaderMaterial({
             uniforms: uniforms,
@@ -131,6 +132,10 @@ export default class camping extends exampleScene {
         const lightOrbit = new THREE.Mesh( new THREE.SphereGeometry(5, 32, 16), new THREE.MeshBasicMaterial({color : 0xffa500 }) );
         this.lightOrbit = lightOrbit;
         this.scene.add(lightOrbit);
+
+        const moonOrbit = new THREE.Mesh( new THREE.SphereGeometry(5, 32, 16), new THREE.MeshBasicMaterial({color : 0xf6f1d5 }) );
+        this.moonOrbit = moonOrbit;
+        this.scene.add(moonOrbit);
 
         const planeGeometry = new THREE.BufferGeometry();
         const vertices = new Float32Array([
@@ -432,6 +437,10 @@ export default class camping extends exampleScene {
         this.lightOrbit.position.x = Math.cos(this.time / 2) * this.scale;
         this.lightOrbit.position.y = Math.sin(this.time / 2) * this.scale;
         this.lightOrbit.position.z = Math.sin(this.time / 4) * this.scale / 2;
+
+        this.moonOrbit.position.x = Math.cos((this.time / 2) + Math.PI) * this.scale;
+        this.moonOrbit.position.y = Math.sin((this.time / 2) + Math.PI) * this.scale;
+        this.moonOrbit.position.z = Math.sin((this.time / 4) + Math.PI) * this.scale / 2;
 
         let lightOrbitWorldPosition = new THREE.Vector3();
         let cameraWorldPosition = new THREE.Vector3();
