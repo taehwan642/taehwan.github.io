@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import exampleScene from './exampleScene.js'
 
-export default class local_space extends exampleScene {
+export default class shader extends exampleScene {
     torusknot;
     initialize(clientWidth, clientHeight) {
         this.scene = new THREE.Scene();
@@ -23,7 +23,6 @@ export default class local_space extends exampleScene {
         const material = new THREE.ShaderMaterial({
             fragmentShader: fragmentShader,
             vertexShader: vertexShader,
-            wireframe: true,
         });
         const torusknot = new THREE.Mesh( geometry, material );
         this.torusknot = torusknot;
@@ -44,15 +43,29 @@ export default class local_space extends exampleScene {
     }
     getDescription() {
         return `
-        <h2>Local Space</h2>
-        <p>If you make or get some model file in internet, and after if you open that in plain text, you'll notice that model files are basically a information about "What information does the program need to know to draw this model?"</p>
-        <p>And that "information" is normally a vertex and index. Vertex is a position of 3D model's point.</p>
-        <p>Index is about "which 3 vertex index you are going to use to make a triangle".</p>
-        <p>Of course 3D models needs to know more. Like textures, materials, and others. <strong>But the basic information is vertex and index.</strong> You cannot draw 3D models without this informations.</p>
-        <p>So why did i mentioned vertex and index? If i dont do any mathematical calculations on vertices after I load the 3D model, that vertices are on Local Space.</p>
+        <h2>Shader</h2>
+        <p>There's a two types of shader, <code>vertex shader</code> and <code>fragment shader.</code></p>
+        <h3>Vertex Shader</h3>
+        <p>Vertex shader is called when each of model's vertex starts to be calculated before drawing your model.</p>
+        <p>You can understand like this : <code>for (vertices) vertexShader();</code></p>
+        <h3>Fragment Shader</h3>
+        <p>Fragment shader is called for one pixel for each triangle drawn in the model.</p>
+        <h3>Usage</h3>
+        <p>Shader can do lots of things, <strong>almost</strong> anything you can imagine.</p>
+        <p>In the screen, you can see torusknot drawn by shader. and it has an really simple code.</p>
+        <p>vertex shader : </p>
+        <code>void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }</code>
+        <p>"position" is a local space vertex position, and shader is calculating to make local vertex position to clip space, and return.</p>
+        <p>fragment shader : </p>
+        <code>void main() {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }</code>
+        <p>setting the triangle's pixel color to white (1, 1, 1).</p>
         <h3>Summarize</h3>
-        <p>That's Local Space. The space where the points (vertices) of the 3D mesh are located without any mathematical calculation.</p>
-        <p>In the screen, you can see the torusknot is not scaling, rotating, and not moving around.</p>
+        <p>Vertex shader : each vertex, Fragment shader : each triangle pixel.</p>
+        <p>Vertex shader returns clip space vertex coord, Fragment shader returns pixel's color.</p>
         `;
     }
     setRenderer(renderer) {

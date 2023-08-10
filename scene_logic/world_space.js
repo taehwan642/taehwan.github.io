@@ -80,7 +80,7 @@ export default class world_space extends exampleScene {
         <p>Yaw Angle += $s * d$ </p>
         <p>position.x = $\\cos(t) * s$ </p>
         <p>position.z = $\\sin(t) * s$ </p>
-        <h3>Summerize</h3>
+        <h3>Summarize</h3>
         <p>If you want to move your model to world space, then you need to have model's transform. after transform calculation, the model is in world space.</p>
         `;
     }

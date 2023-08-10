@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import local_space from './scene_logic/local_space.js'
 import world_space from './scene_logic/world_space.js'
+import shader from './scene_logic/shader.js';
 import lambertian_reflectance from './scene_logic/lambertian_reflectance.js'
 import texture from './scene_logic/texture.js';
 import normal_map_lambertian_reflectance from './scene_logic/normal_map_lambertian_reflectance.js'
@@ -14,6 +15,7 @@ let currentScene = null;
 const exampleScenes = [ 
     new local_space(), 
     new world_space(), 
+    new shader(),
     new lambertian_reflectance(), 
     new texture(), 
     new normal_map_lambertian_reflectance(), 
@@ -32,7 +34,7 @@ renderer.setClearColor(0x404040);
 leftContainer.appendChild(renderer.domElement);
 
 function initialize() {
-    currentScene = exampleScenes[8];
+    currentScene = exampleScenes[9];
     currentScene.setRenderer(renderer);
     currentScene.initialize(leftContainer.clientWidth, leftContainer.clientHeight);
     const descriptionElement = document.getElementById('description');
