@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import exampleScene from './exampleScene.js'
 
 class Vector3 {
@@ -141,6 +142,7 @@ export default class radiosity extends exampleScene {
     hemiCubeRenderMesh;
     hemiCubeRenderCamera;
     hemiCubeRenderScene;
+    hemiCubeCameraHelper;
 
     readBuffer;
 
@@ -184,6 +186,13 @@ export default class radiosity extends exampleScene {
             this.makeSideFactors(hemiCubeResolution / 2)
         );
         this.hemiCube = hemiCube;
+
+        this.hemiCubeRenderCamera = new THREE.PerspectiveCamera(
+            this.hemiCube.view.fovX, 
+            this.hemiCube.view.fovX / this.hemiCube.view.fovY,
+            this.hemiCube.view.near,
+            this.hemiCube.view.far);
+
         this.readBuffer = new Uint8Array( hemiCube.view.resolutionX * hemiCube.view.resolutionY * 4 );
 
         this.initModelDatas(models);
@@ -240,10 +249,17 @@ export default class radiosity extends exampleScene {
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera( 75, clientWidth / clientHeight, 0.1, 2000 );
+        this.camera.layers.enable(0);
+        this.camera.layers.enable(1);
 
         this.camera.position.x = 150;
         this.camera.position.y = 50;
         this.camera.position.z = 700;
+
+        const controls = new OrbitControls( this.camera, this.renderer.domElement );
+        controls.update();
+
+        this.controls = controls;
 
         for (var i = 0; i < elements.length; ++i) {
             this.scene.add(elements[i].mesh)
@@ -260,6 +276,7 @@ export default class radiosity extends exampleScene {
             });
 
             const mesh = new THREE.Mesh(geo, material);
+            mesh.layers.set(1);
             mesh.position.x = 300;
             mesh.position.z = -300;
             
@@ -272,9 +289,14 @@ export default class radiosity extends exampleScene {
         })
 
         const mesh = new THREE.Mesh(geometry, material);
+        mesh.layers.set(1);
         mesh.position.x = 400;
         mesh.position.y = 400;
-        //this.scene.add(mesh);
+
+        this.hemiCubeCameraHelper = new THREE.CameraHelper( this.hemiCubeRenderCamera );
+        this.hemiCubeCameraHelper.layers.set(1);
+        //this.scene.add(this.hemiCubeCameraHelper);
+        this.scene.add(mesh);
     }
     processInput() {
         const self = this;
@@ -288,11 +310,11 @@ export default class radiosity extends exampleScene {
                 // self.renderer.setClearColor(0x404040);
         
                 // for (let i = 0; i < self.elements.length; ++i) {
-                //     self.elements[i].mesh.material.color = new THREE.Color(self.elements[i].radiosity.r, self.elements[i].radiosity.g, self.elements[i].radiosity.b);
+                //     self.elements[i].mesh.material.color = new THREE.Color(self.elements[i].radiosity.r * self.radiosityParameter.intensityScale, self.elements[i].radiosity.g * self.radiosityParameter.intensityScale, self.elements[i].radiosity.b * self.radiosityParameter.intensityScale);
                 // }
-                for (let i = 0; i < self.elements.length; ++i) {
-                    self.elements[i].mesh.rotation.y += 0.05;
-                }
+                // for (let i = 0; i < self.elements.length; ++i) {
+                //     self.elements[i].mesh.rotation.y += 0.05;
+                // }
                 break;
               default:
                 break;
@@ -300,6 +322,7 @@ export default class radiosity extends exampleScene {
           };
     }
     update() {
+        this.controls.update();
         this.renderer.setRenderTarget(this.hemiCubeRenderTarget);
         this.doOneIteration();
         
@@ -641,6 +664,7 @@ export default class radiosity extends exampleScene {
             for (j = 0; j < resolutionX; j++) {
                 if (buffer[i * resolutionX + j] != current_backItem)  
                 {
+                    //console.log((i * resolutionX + j) + " " + (buffer[i * resolutionX + j]));
                     jj = (j < halfResolution ? j : (halfResolution - 1 - (j % halfResolution)));
                     formFactors[buffer[i * resolutionX + j]] += deltaFactors[ii + jj];
                 }
@@ -654,24 +678,18 @@ export default class radiosity extends exampleScene {
         this.renderer.setClearColor(new THREE.Color(1, 1, 1));
         this.renderer.clear();
       
-        this.hemiCubeRenderCamera = new THREE.PerspectiveCamera(
-            this.hemiCube.view.fovX, 
-            this.hemiCube.view.fovX / this.hemiCube.view.fovY,
-            this.hemiCube.view.near,
-            this.hemiCube.view.far);
-
         this.hemiCubeRenderCamera.position.x = this.hemiCube.view.center.x;
         this.hemiCubeRenderCamera.position.y = this.hemiCube.view.center.y;
         this.hemiCubeRenderCamera.position.z = this.hemiCube.view.center.z;
 
+        this.hemiCubeRenderCamera.up.x = this.hemiCube.view.up.x;
+        this.hemiCubeRenderCamera.up.y = this.hemiCube.view.up.y;
+        this.hemiCubeRenderCamera.up.z = this.hemiCube.view.up.z;
+
         this.hemiCubeRenderCamera.lookAt(new THREE.Vector3(this.hemiCube.view.lookAt.x, this.hemiCube.view.lookAt.y, this.hemiCube.view.lookAt.z));
-        // set lookat 
-        //this.hemiCubeRenderCamera.lookAt(
-        //    new THREE.Vector3(this.hemiCube.view.center.x, this.hemiCube.view.center.y, this.hemiCube.view.center.z),
-        //    new THREE.Vector3(this.hemiCube.view.lookAt.x, this.hemiCube.view.lookAt.y, this.hemiCube.view.lookAt.z),
-        //    new THREE.Vector3(this.hemiCube.view.up.x, this.hemiCube.view.up.y, this.hemiCube.view.up.z),
-        //);
-        //console.log(this.hemiCubeRenderCamera);
+        
+        this.hemiCubeCameraHelper.update();
+        
         this.hemiCubeRenderCamera.updateProjectionMatrix();
     }
 
@@ -682,14 +700,30 @@ export default class radiosity extends exampleScene {
 
     endDrawHemiCube() {
         this.renderer.readRenderTargetPixels( this.hemiCubeRenderTarget, 0, 0, this.hemiCube.view.resolutionX, this.hemiCube.view.resolutionY, this.readBuffer );
-        for (let i = 0; i < this.hemiCube.view.resolutionY; ++i) {
-            for (let j = 0; j < this.hemiCube.view.resolutionX; ++j) {
+        let newBuffer = [];
+        let newBufferIndex = 0;
+        let index = 0;
+        for (let i = 0; i < this.readBuffer.length; ++i) {
+            if (index == 3) {
+                index = 0;
+                continue;
+            }
+            newBuffer[newBufferIndex] = this.readBuffer[i];
+            ++newBufferIndex;
+            ++index;
+        }
+
+        for (let j = 0; j < this.hemiCube.view.resolutionY; ++j) {
+            for (let i = 0; i < this.hemiCube.view.resolutionX; ++i) {
                 // r g b a
                 this.hemiCube.view.buffer[i * this.hemiCube.view.resolutionY + j] =
-                    (this.readBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 4] * 65536) + 
-                    (this.readBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 4 + 1] * 256) +
-                    (this.readBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 4 + 2]);
-                //console.log(i * 3 * this.hemiCube.view.resolutionY + j * 4 + " " + this.readBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 4] + " " + this.readBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 4 + 1] + " " + this.readBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 4 + 2]);
+                    (newBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 3] * 65536) + 
+                    (newBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 3 + 1] * 256) +
+                    (newBuffer[i * 3 * this.hemiCube.view.resolutionY + j * 3 + 2]);
+
+                // console.log((i * 3 * this.hemiCube.view.resolutionY + j * 4) + " " +
+                // (i * 3 * this.hemiCube.view.resolutionY + j * 4 + 1) + " " +
+                // (i * 3 * this.hemiCube.view.resolutionY + j * 4 + 2));
             }
         }
     }
@@ -761,9 +795,11 @@ export default class radiosity extends exampleScene {
             for (let i = 0; i < this.elements.length; ++i) {
                 this.drawHemiCubeElement(this.elements[i], i);
             }
-            this.renderer.render(this.scene, this.hemiCubeRenderCamera)
+            this.renderer.render(this.scene, this.hemiCubeRenderCamera);
             this.endDrawHemiCube();
             
+            //console.log(this.hemiCube.view.buffer);
+
             if (face == 0) {
                 this.sumFormFactors(this.formFactors, this.hemiCube.view.resolutionX, this.hemiCube.view.resolutionY, this.hemiCube.view.buffer, this.hemiCube.topFactors, 0);
             } else {
